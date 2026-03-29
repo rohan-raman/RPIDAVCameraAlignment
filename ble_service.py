@@ -21,6 +21,8 @@ DIRECTION_CHAR_UUID = '12345678-1234-5678-1234-56789abcdef1'
 # Base path for all our objects
 APP_PATH = '/org/bluez/example'
 
+DEVICE_NAME = "DAV Camera Alignment"
+
 
 class NoInputNoOutputAgent:
     """
@@ -117,7 +119,7 @@ class Advertisement:
 
     @property
     def LocalName(self):
-        return 'AprilTagFinder'
+        return DEVICE_NAME
 
     @property
     def ServiceUUIDs(self):
@@ -290,7 +292,7 @@ class BLEServer:
         adapter = self.bus.get(BLUEZ_SERVICE_NAME, self._adapter_path)
         adapter_props = adapter['org.freedesktop.DBus.Properties']
         adapter_props.Set('org.bluez.Adapter1', 'Powered', GLib.Variant('b', True))
-        adapter_props.Set('org.bluez.Adapter1', 'Alias', GLib.Variant('s', 'AprilTagFinder'))
+        adapter_props.Set('org.bluez.Adapter1', 'Alias', GLib.Variant('s', DEVICE_NAME))
         adapter_props.Set('org.bluez.Adapter1', 'Discoverable', GLib.Variant('b', True))
         adapter_props.Set('org.bluez.Adapter1', 'Pairable', GLib.Variant('b', True))
         print("Adapter powered on and configured")
