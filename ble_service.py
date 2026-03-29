@@ -29,6 +29,7 @@ def configure_adapter_no_pairing():
         subprocess.run(["bluetoothctl", "power", "on"], check=True, capture_output=True)
 
         # Make discoverable
+        subprocess.run(["bluetoothctl", "discoverable-timeout", "0"], check=True, capture_output=True)
         subprocess.run(["bluetoothctl", "discoverable", "on"], check=True, capture_output=True)
 
         # Set pairable off - don't require pairing
@@ -117,8 +118,7 @@ class BLEServer:
         """Start the BLE server in a background thread"""
         print("Starting BLE server...")
 
-        # Configure adapter first
-        configure_adapter_no_pairing()
+
 
         self._thread = threading.Thread(target=self._run_event_loop, daemon=True)
         self._thread.start()
@@ -133,6 +133,8 @@ class BLEServer:
         if not self._running:
             raise Exception("BLE server failed to start within timeout")
 
+        # Configure adapter first
+        configure_adapter_no_pairing()
         print("BLE server started successfully")
 
     def send_direction(self, direction: str):
