@@ -33,7 +33,7 @@ def configure_adapter_no_pairing():
         subprocess.run(["bluetoothctl", "discoverable", "on"], check=True, capture_output=True)
 
         # Set pairable off - don't require pairing
-        subprocess.run(["bluetoothctl", "pairable", "off"], check=True, capture_output=True)
+        subprocess.run(["bluetoothctl", "pairable", "on"], check=True, capture_output=True)
 
         # Set agent to NoInputNoOutput for any legacy pairing requests
         subprocess.run(["bluetoothctl", "agent", "NoInputNoOutput"], capture_output=True)

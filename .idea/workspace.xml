@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Switching to BLESS">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ble_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/ble_service.py" afterDir="false" />
-    </list>
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Testing discoverable" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -72,7 +69,7 @@
       <updated>1774750330685</updated>
       <workItem from="1774750331784" duration="10684000" />
       <workItem from="1774770696208" duration="1012000" />
-      <workItem from="1774813789886" duration="9164000" />
+      <workItem from="1774813789886" duration="9362000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -154,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774823631057</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Testing discoverable">
+      <option name="closed" value="true" />
+      <created>1774824672288</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1774824672288</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,6 +182,7 @@
     <MESSAGE value="Fix app path pointing to inaccessible path by user" />
     <MESSAGE value="Fix needing to confirm connection" />
     <MESSAGE value="Switching to BLESS" />
-    <option name="LAST_COMMIT_MESSAGE" value="Switching to BLESS" />
+    <MESSAGE value="Testing discoverable" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testing discoverable" />
   </component>
 </project>
