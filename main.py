@@ -5,7 +5,9 @@ Detects AprilTags and sends direction guidance via Bluetooth
 """
 
 from picamera2 import Picamera2
+import cv2
 from dt_apriltags import Detector
+import time
 
 # Try to import BLE - we'll handle if it fails
 try:
@@ -82,4 +84,91 @@ class Main:
 
     def format_message(self, direction, offset, tag_id):
         """Format message to send via Bluetooth"""
-        #
+        # Format: DIRECTION:OFFSET:TAG_ID
+        return f"{direction}:{offset}:{tag_id}"
+
+    def send_bluetooth_update(self, message):
+        """Send update via Bluetooth if enough time has passed"""
+        current_time = time.time()
+        if current_time - self.last_ble_update >= self.ble_update_interval:
+            if self.ble_server:
+                self.ble_server.send_direction(message)
+            self.last_ble_update = current_time
+
+    def run(self):
+        """Main loop"""
+        print("\n" + "=" * 50)
+        print("AprilTag Finder Started!")
+        print("=" * 50)
+        print(f"Camera resolution: {self.frame_width}x{self.frame_height}")
+        print(f"Dead zone: ±{self.dead_zone} pixels")
+        print(f"Bluetooth: {'Enabled' if self.use_bluetooth else 'Disabled'}")
+        print("\nPress Ctrl+C to quit")
+        print("=" * 50 + "\n")
+
+        self.camera.start()
+
+        try:
+            while True:
+                # Capture frame
+                frame = self.camera.capture_array()
+
+                # Convert to grayscale for detection
+                gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+
+                # Detect AprilTags
+                tags = self.detector.detect(gray)
+
+                # Process first detected tag (you could handle multiple)
+                if tags:
+                    tag = tags[0]  # Use first tag
+                    center_x = int(tag.center[0])
+                    direction, offset = self.calculate_direction(center_x)
+
+                    # Send Bluetooth update
+                    if self.use_bluetooth:
+                        message = self.format_message(direction, offset, tag.tag_id)
+                        self.send_bluetooth_update(message)
+
+                    # Console output (rate limited)
+                    if direction != self.last_direction:
+                        print(f"Tag {tag.tag_id}: {direction} (offset: {offset:+d})")
+                        self.last_direction = direction
+                else:
+                    # No tag detected
+                    if self.use_bluetooth:
+                        self.send_bluetooth_update("NO_TAG:0:0")
+                    if self.last_direction != "NO_TAG":
+                        print("No tag detected")
+                        self.last_direction = "NO_TAG"
+
+                # Small delay to prevent CPU spinning
+                time.sleep(0.01)
+
+        except KeyboardInterrupt:
+            print("\nStopping...")
+        finally:
+            self.cleanup()
+
+    def cleanup(self):
+        """Clean up resources"""
+        print("Cleaning up...")
+        self.camera.stop()
+        if self.ble_server:
+            self.ble_server.stop()
+        print("Done!")
+
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description='AprilTag Finder with Bluetooth')
+    parser.add_argument('--no-bluetooth', action='store_true',
+                        help='Disable Bluetooth')
+    args = parser.parse_args()
+
+    finder = Main(use_bluetooth=not args.no_bluetooth)
+    finder.run()
+
+
+if __name__ == "__main__":
+    main()
