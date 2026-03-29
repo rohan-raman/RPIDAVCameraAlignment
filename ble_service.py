@@ -2,6 +2,7 @@ from pydbus import SystemBus
 from pydbus.generic import signal
 from gi.repository import GLib
 import threading
+import time
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
@@ -16,6 +17,9 @@ LE_ADVERTISEMENT_IFACE = 'org.bluez.LEAdvertisement1'
 APRILTAG_SERVICE_UUID = '12345678-1234-5678-1234-56789abcdef0'
 DIRECTION_CHAR_UUID = '12345678-1234-5678-1234-56789abcdef1'
 
+# Base path for all our objects (NOT root!)
+APP_PATH = '/org/bluez/example'
+
 
 class Advertisement:
     """
@@ -28,51 +32,21 @@ class Advertisement:
         </interface>
     </node>
     """
-    PATH_BASE = '/org/bluez/example/advertisement'
 
     def __init__(self, index):
-        self.path = self.PATH_BASE + str(index)
-        self._type = 'peripheral'
-        self._local_name = 'AprilTagFinder'
-        self._service_uuids = [APRILTAG_SERVICE_UUID]
-
-        self._includes = ['tx-power']  # Include TX Power in adv data
-        self._tx_power = 0  # dBm - adjust based on your hardware
-
-        self._min_interval = 32  # 20ms
-        self._max_interval = 32  # 20ms
+        self.path = APP_PATH + '/advertisement' + str(index)
 
     @property
     def Type(self):
-        return self._type
+        return 'peripheral'
 
     @property
     def LocalName(self):
-        return self._local_name
+        return 'AprilTagFinder'
 
     @property
     def ServiceUUIDs(self):
-        return self._service_uuids
-
-    @property
-    def Includes(self):
-        """Include tx-power and flags in advertising data"""
-        return self._includes
-
-    @property
-    def TxPower(self):
-        """TX Power Level in dBm"""
-        return self._tx_power
-
-    @property
-    def MinInterval(self):
-        """Minimum advertising interval (units of 0.625ms)"""
-        return self._min_interval
-
-    @property
-    def MaxInterval(self):
-        """Maximum advertising interval (units of 0.625ms)"""
-        return self._max_interval
+        return [APRILTAG_SERVICE_UUID]
 
     def Release(self):
         print('Advertisement released')
@@ -91,14 +65,6 @@ class DirectionCharacteristic:
             <property name='Service' type='o' access='read'/>
             <property name='UUID' type='s' access='read'/>
             <property name='Flags' type='as' access='read'/>
-            <property name='Value' type='ay' access='read'/>
-        </interface>
-        <interface name='org.freedesktop.DBus.Properties'>
-            <signal name='PropertiesChanged'>
-                <arg name='interface' type='s'/>
-                <arg name='changed_properties' type='a{sv}'/>
-                <arg name='invalidated_properties' type='as'/>
-            </signal>
         </interface>
     </node>
     """
@@ -108,8 +74,6 @@ class DirectionCharacteristic:
     def __init__(self, index, service_path):
         self.path = service_path + '/char' + str(index)
         self._service_path = service_path
-        self._uuid = DIRECTION_CHAR_UUID
-        self._flags = ['read', 'notify']
         self._value = [0]
         self.notifying = False
 
@@ -119,17 +83,14 @@ class DirectionCharacteristic:
 
     @property
     def UUID(self):
-        return self._uuid
+        return DIRECTION_CHAR_UUID
 
     @property
     def Flags(self):
-        return self._flags
-
-    @property
-    def Value(self):
-        return self._value
+        return ['read', 'notify']
 
     def ReadValue(self, options):
+        print(f"ReadValue called, returning: {self._value}")
         return self._value
 
     def StartNotify(self):
@@ -141,11 +102,17 @@ class DirectionCharacteristic:
         print("Notifications stopped")
 
     def set_value(self, value):
-        self._value = [ord(b) for b in value]
+        if isinstance(value, str):
+            self._value = [ord(b) for b in value]
+        else:
+            self._value = list(value)
 
     def notify(self, value):
         if self.notifying:
-            self._value = [ord(b) for b in value]
+            if isinstance(value, str):
+                self._value = [ord(b) for b in value]
+            else:
+                self._value = list(value)
             self.PropertiesChanged(
                 GATT_CHRC_IFACE,
                 {'Value': GLib.Variant('ay', self._value)},
@@ -159,30 +126,21 @@ class AprilTagService:
         <interface name='org.bluez.GattService1'>
             <property name='UUID' type='s' access='read'/>
             <property name='Primary' type='b' access='read'/>
-            <property name='Characteristics' type='ao' access='read'/>
         </interface>
     </node>
     """
-    PATH_BASE = '/org/bluez/example/service'
 
     def __init__(self, index):
-        self.path = self.PATH_BASE + str(index)
-        self._uuid = APRILTAG_SERVICE_UUID
-        self._primary = True
+        self.path = APP_PATH + '/service' + str(index)
         self.direction_char = DirectionCharacteristic(0, self.path)
-        self._characteristics = [self.direction_char.path]
 
     @property
     def UUID(self):
-        return self._uuid
+        return APRILTAG_SERVICE_UUID
 
     @property
     def Primary(self):
-        return self._primary
-
-    @property
-    def Characteristics(self):
-        return self._characteristics
+        return True
 
 
 class Application:
@@ -197,21 +155,21 @@ class Application:
     """
 
     def __init__(self):
-        self.path = '/'
+        self.path = APP_PATH  # FIX: Not root '/', use our base path
         self.services = []
 
     def add_service(self, service):
         self.services.append(service)
 
     def GetManagedObjects(self):
+        print("GetManagedObjects called by BlueZ")
         response = {}
         for service in self.services:
-            # Add service properties
+            # Add service properties (removed Characteristics property)
             response[service.path] = {
                 GATT_SERVICE_IFACE: {
                     'UUID': GLib.Variant('s', service.UUID),
                     'Primary': GLib.Variant('b', service.Primary),
-                    'Characteristics': GLib.Variant('ao', service.Characteristics)
                 }
             }
             # Add characteristic properties
@@ -228,29 +186,50 @@ class Application:
 
 class BLEServer:
     def __init__(self):
-        self.bus = SystemBus()
+        self.bus = None
         self.mainloop = None
         self.app = None
         self.service = None
         self.advertisement = None
         self._registrations = []
+        self._adapter_path = None
+
+    def find_adapter(self):
+        bluez = self.bus.get(BLUEZ_SERVICE_NAME, '/')
+        om = bluez[DBUS_OM_IFACE]
+        objects = om.GetManagedObjects()
+        for path, interfaces in objects.items():
+            if GATT_MANAGER_IFACE in interfaces:
+                return path
+        return None
 
     def start(self):
-        adapter_path = self.find_adapter()
-        if not adapter_path:
+        self.bus = SystemBus()
+
+        self._adapter_path = self.find_adapter()
+        if not self._adapter_path:
             raise Exception('BLE adapter not found')
 
-        # Power on the adapter
-        adapter = self.bus.get(BLUEZ_SERVICE_NAME, adapter_path)
+        print(f"Using adapter: {self._adapter_path}")
+
+        # Power on the adapter and set name
+        adapter = self.bus.get(BLUEZ_SERVICE_NAME, self._adapter_path)
         adapter_props = adapter['org.freedesktop.DBus.Properties']
         adapter_props.Set('org.bluez.Adapter1', 'Powered', GLib.Variant('b', True))
+        adapter_props.Set('org.bluez.Adapter1', 'Alias', GLib.Variant('s', 'AprilTagFinder'))
+        adapter_props.Set('org.bluez.Adapter1', 'Discoverable', GLib.Variant('b', True))
+        print("Adapter powered on and configured")
 
         # Create application and service
         self.app = Application()
         self.service = AprilTagService(0)
         self.app.add_service(self.service)
 
-        # Register objects on the bus
+        # Create advertisement
+        self.advertisement = Advertisement(0)
+
+        # Register all objects on the bus FIRST
+        print("Registering D-Bus objects...")
         self._registrations.append(
             self.bus.register_object(self.app.path, self.app, None)
         )
@@ -264,38 +243,33 @@ class BLEServer:
                 None
             )
         )
-
-        # Register GATT application
-        gatt_manager = self.bus.get(BLUEZ_SERVICE_NAME, adapter_path)[GATT_MANAGER_IFACE]
-        gatt_manager.RegisterApplication(self.app.path, {})
-        print("GATT application registered")
-
-        # Create and register advertisement
-        self.advertisement = Advertisement(0)
         self._registrations.append(
             self.bus.register_object(self.advertisement.path, self.advertisement, None)
         )
+        print("D-Bus objects registered")
 
-        ad_manager = self.bus.get(BLUEZ_SERVICE_NAME, adapter_path)[LE_ADVERTISING_MANAGER_IFACE]
+        # FIX: Start main loop BEFORE registering with BlueZ
+        print("Starting GLib main loop...")
+        self.mainloop = GLib.MainLoop()
+        thread = threading.Thread(target=self.mainloop.run, daemon=True)
+        thread.start()
+        time.sleep(0.1)  # Give loop time to start
+
+        # Now register with BlueZ
+        print("Registering GATT application with BlueZ...")
+        gatt_manager = self.bus.get(BLUEZ_SERVICE_NAME, self._adapter_path)[GATT_MANAGER_IFACE]
+        gatt_manager.RegisterApplication(self.app.path, {})
+        print("GATT application registered")
+
+        print("Registering advertisement with BlueZ...")
+        ad_manager = self.bus.get(BLUEZ_SERVICE_NAME, self._adapter_path)[LE_ADVERTISING_MANAGER_IFACE]
         ad_manager.RegisterAdvertisement(self.advertisement.path, {})
         print("Advertisement registered")
 
-        print("BLE Server started. Device name: AprilTagFinder")
-
-        # Run main loop in a separate thread
-        self.mainloop = GLib.MainLoop()
-        thread = threading.Thread(target=self.mainloop.run)
-        thread.daemon = True
-        thread.start()
-
-    def find_adapter(self):
-        bluez = self.bus.get(BLUEZ_SERVICE_NAME, '/')
-        om = bluez[DBUS_OM_IFACE]
-        objects = om.GetManagedObjects()
-        for path, interfaces in objects.items():
-            if GATT_MANAGER_IFACE in interfaces:
-                return path
-        return None
+        print("\n" + "=" * 40)
+        print("BLE Server started!")
+        print("Device name: AprilTagFinder")
+        print("=" * 40 + "\n")
 
     def send_direction(self, direction):
         """Send direction update to connected phone"""
@@ -307,5 +281,21 @@ class BLEServer:
             self.mainloop.quit()
         # Unregister objects
         for reg in self._registrations:
-            reg.unregister()
+            try:
+                reg.unregister()
+            except:
+                pass
         self._registrations.clear()
+
+
+# Test if run directly
+if __name__ == '__main__':
+    server = BLEServer()
+    try:
+        server.start()
+        print("Press Ctrl+C to stop")
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nStopping...")
+        server.stop()

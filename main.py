@@ -219,7 +219,9 @@ class Main:
                     display_frame = self.draw_overlay(frame.copy(), tags)
                     cv2.imshow("AprilTag Finder", display_frame)
 
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                    key = cv2.waitKey(1) & 0xFF
+                    if key == ord('q'):
+                        print("\nQuitting...")
                         break
                 else:
                     # Small delay when not showing video
