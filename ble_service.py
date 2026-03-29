@@ -6,6 +6,7 @@ Provides a GATT server for AprilTag direction data
 
 import asyncio
 import threading
+import subprocess
 from typing import Any
 from bless import (
     BlessServer,
@@ -19,6 +20,32 @@ APRILTAG_SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0"
 DIRECTION_CHAR_UUID = "12345678-1234-5678-1234-56789abcdef1"
 
 DEVICE_NAME = "DAV Camera Alignment"
+
+
+def configure_adapter_no_pairing():
+    """Configure BlueZ adapter to not require pairing"""
+    try:
+        # Power on adapter
+        subprocess.run(["bluetoothctl", "power", "on"], check=True, capture_output=True)
+
+        # Make discoverable
+        subprocess.run(["bluetoothctl", "discoverable", "on"], check=True, capture_output=True)
+
+        # Set pairable off - don't require pairing
+        subprocess.run(["bluetoothctl", "pairable", "off"], check=True, capture_output=True)
+
+        # Set agent to NoInputNoOutput for any legacy pairing requests
+        subprocess.run(["bluetoothctl", "agent", "NoInputNoOutput"], capture_output=True)
+        subprocess.run(["bluetoothctl", "default-agent"], capture_output=True)
+
+        print("Bluetooth adapter configured for open access (no pairing required)")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to configure Bluetooth adapter: {e}")
+        return False
+    except FileNotFoundError:
+        print("bluetoothctl not found - make sure BlueZ is installed")
+        return False
 
 
 class BLEServer:
@@ -46,14 +73,12 @@ class BLEServer:
 
         await self.server.add_new_service(APRILTAG_SERVICE_UUID)
 
-        # Add direction characteristic with read and notify
+        # Add direction characteristic with read and notify - no encryption required
         char_flags = (
-            GATTCharacteristicProperties.read |
-            GATTCharacteristicProperties.notify
+                GATTCharacteristicProperties.read |
+                GATTCharacteristicProperties.notify
         )
-        permissions = (
-            GATTAttributePermissions.readable
-        )
+        permissions = GATTAttributePermissions.readable
 
         await self.server.add_new_characteristic(
             APRILTAG_SERVICE_UUID,
@@ -71,6 +96,7 @@ class BLEServer:
         print("\n" + "=" * 40)
         print("BLE Server started!")
         print(f"Device name: {DEVICE_NAME}")
+        print("Pairing: NOT REQUIRED")
         print("=" * 40 + "\n")
 
     def _run_event_loop(self):
@@ -90,6 +116,10 @@ class BLEServer:
     def start(self):
         """Start the BLE server in a background thread"""
         print("Starting BLE server...")
+
+        # Configure adapter first
+        configure_adapter_no_pairing()
+
         self._thread = threading.Thread(target=self._run_event_loop, daemon=True)
         self._thread.start()
 
