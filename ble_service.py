@@ -354,7 +354,7 @@ class BLEServer:
 
         print("\n" + "=" * 40)
         print("BLE Server started!")
-        print("Device name: AprilTagFinder")
+        print("Device name: " + DEVICE_NAME)
         print("Pairing: Automatic (no PIN required)")
         print("=" * 40 + "\n")
 
