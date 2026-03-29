@@ -34,7 +34,7 @@ class Main:
         self.camera.configure(config)
 
         print("Starting detector...")
-        self.detecto = Detector(
+        self.detector = Detector(
             families="tag36h11",
             nthreads=4,
             quad_decimate=1.0,
