@@ -92,7 +92,7 @@ class Main:
         current_time = time.time()
         if current_time - self.last_ble_update >= self.ble_update_interval:
             if self.ble_server:
-                self.ble_server.send_direction(message)
+                self.ble_server.send(message)  # ✅ FIXED
             self.last_ble_update = current_time
 
     def run(self):
