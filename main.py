@@ -150,6 +150,7 @@ class Main:
         """Clean up resources"""
         print("Cleaning up...")
         self.camera.stop()
+        print("Camera stopped")
         if self.ble_server:
             self.ble_server.stop()
         print("Done!")
