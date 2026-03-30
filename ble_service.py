@@ -144,6 +144,7 @@ class BLEServer:
 
             # Send notification
             self.server.update_value(SERVICE_UUID, CHAR_UUID)
+            print("Sent on bluetooth")
 
         except Exception:
             pass  # Ignore if no subscribers
