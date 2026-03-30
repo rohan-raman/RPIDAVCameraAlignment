@@ -128,11 +128,11 @@ class BLEServer:
     # -----------------------
     # Send updates
     # -----------------------
-    def send(self, data: str):
+    def send(self, data):
         if not self.running or not self.server:
             return
 
-        self.current_value = bytearray(data.encode("utf-8"))
+        self.current_value = data
 
         if self.loop and self.loop.is_running():
             asyncio.run_coroutine_threadsafe(self._notify(), self.loop)

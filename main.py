@@ -18,6 +18,8 @@ except ImportError as e:
     print(f"BLE not available - running in camera-only mode: {e}")
 
 
+
+
 class Main:
     def __init__(self, use_bluetooth=True):
         self.detector = None
@@ -48,7 +50,7 @@ class Main:
         self.center_x = self.frame_width // 2
 
         # Dead zone (how close to center is "good enough")
-        self.dead_zone = 50  # pixels
+        self.hysteresis = self.frame_width // 5  # pixels
 
         # Bluetooth
         self.ble_server = None
@@ -71,28 +73,21 @@ class Main:
     def calculate_direction(self, tag_center_x):
         """
         Calculate which direction to move based on tag position
-        Returns: (direction_string, offset_value)
+        Returns: 0 (left), 1 (little left), 2 (center), 3 (little right), 4 (right)
         """
-        offset = tag_center_x - self.center_x
+        return tag_center_x // self.hysteresis
 
-        if abs(offset) <= self.dead_zone:
-            return "CENTERED", offset
-        elif offset < 0:
-            return "LEFT", offset
-        else:
-            return "RIGHT", offset
-
-    def format_message(self, direction, offset, tag_id):
-        """Format message to send via Bluetooth"""
-        # Format: DIRECTION:OFFSET:TAG_ID
-        return f"{direction}:{offset}:{tag_id}"
+    def format_direction(self, direction):
+        """Format message to send in console"""
+        arr = ["LEFT", "LITTLE LEFT", "CENTER", "LITTLE RIGHT", "RIGHT"]
+        return arr[direction]
 
     def send_bluetooth_update(self, message):
         """Send update via Bluetooth if enough time has passed"""
         current_time = time.time()
         if current_time - self.last_ble_update >= self.ble_update_interval:
             if self.ble_server:
-                self.ble_server.send(message)  # ✅ FIXED
+                self.ble_server.send(message)
             self.last_ble_update = current_time
 
     def run(self):
@@ -123,24 +118,25 @@ class Main:
                 if tags:
                     tag = tags[0]  # Use first tag
                     center_x = int(tag.center[0])
-                    direction, offset = self.calculate_direction(center_x)
+                    direction = self.calculate_direction(center_x)
 
-                    # Send Bluetooth update
-                    if self.use_bluetooth:
-                        message = self.format_message(direction, offset, tag.tag_id)
-                        self.send_bluetooth_update(message)
 
-                    # Console output (rate limited)
                     if direction != self.last_direction:
-                        print(f"Tag {tag.tag_id}: {direction} (offset: {offset:+d})")
+                        # Console output
+                        print(self.format_direction(direction))
                         self.last_direction = direction
+                        # Bluetooth update
+                        if self.use_bluetooth:
+                            self.send_bluetooth_update(direction)
                 else:
                     # No tag detected
-                    if self.use_bluetooth:
-                        self.send_bluetooth_update("NO_TAG:0:0")
-                    if self.last_direction != "NO_TAG":
-                        print("No tag detected")
-                        self.last_direction = "NO_TAG"
+                    if self.last_direction != "-1":
+                        # Console output
+                        print("NO TAG")
+                        self.last_direction = "-1"
+                        # Bluetooth update
+                        if self.use_bluetooth:
+                            self.send_bluetooth_update(-1)
 
                 # Small delay to prevent CPU spinning
                 time.sleep(0.01)
