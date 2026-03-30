@@ -127,7 +127,7 @@ class Main:
                         self.last_direction = direction
                         # Bluetooth update
                         if self.use_bluetooth:
-                            self.send_bluetooth_update(direction)
+                            self.send_bluetooth_update(self.format_direction(direction))
                 else:
                     # No tag detected
                     if self.last_direction != "0":
@@ -136,7 +136,7 @@ class Main:
                         self.last_direction = "0"
                         # Bluetooth update
                         if self.use_bluetooth:
-                            self.send_bluetooth_update(0)
+                            self.send_bluetooth_update("NO TAG")
 
                 # Small delay to prevent CPU spinning
                 time.sleep(0.01)

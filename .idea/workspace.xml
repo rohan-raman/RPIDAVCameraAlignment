@@ -75,7 +75,7 @@
       <workItem from="1774770696208" duration="1012000" />
       <workItem from="1774813789886" duration="17479000" />
       <workItem from="1774850402267" duration="665000" />
-      <workItem from="1774854915095" duration="129000" />
+      <workItem from="1774854915095" duration="746000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -221,7 +221,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774850455014</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Added console output to camera stop to see what hangs">
+      <option name="closed" value="true" />
+      <created>1774855300652</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1774855300652</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
