@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Adding Apple standards to BLE">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ble_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/ble_service.py" afterDir="false" />
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Change dead zone mention in console output">
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -73,7 +71,7 @@
       <updated>1774750330685</updated>
       <workItem from="1774750331784" duration="10684000" />
       <workItem from="1774770696208" duration="1012000" />
-      <workItem from="1774813789886" duration="16796000" />
+      <workItem from="1774813789886" duration="17103000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -187,7 +185,23 @@
       <option name="project" value="LOCAL" />
       <updated>1774842746960</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Switching BLE output to integer hysteresis">
+      <option name="closed" value="true" />
+      <created>1774844453430</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1774844453430</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Change dead zone mention in console output">
+      <option name="closed" value="true" />
+      <created>1774844528278</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1774844528278</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -214,6 +228,8 @@
     <MESSAGE value="Testing pairable" />
     <MESSAGE value="Applying BLE server fix" />
     <MESSAGE value="Adding Apple standards to BLE" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding Apple standards to BLE" />
+    <MESSAGE value="Switching BLE output to integer hysteresis" />
+    <MESSAGE value="Change dead zone mention in console output" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change dead zone mention in console output" />
   </component>
 </project>

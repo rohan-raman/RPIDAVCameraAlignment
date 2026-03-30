@@ -73,14 +73,14 @@ class Main:
     def calculate_direction(self, tag_center_x):
         """
         Calculate which direction to move based on tag position
-        Returns: 0 (left), 1 (little left), 2 (center), 3 (little right), 4 (right)
+        Returns: 1 (left), 2 (little left), 3 (center), 4 (little right), 5 (right)
         """
-        return tag_center_x // self.hysteresis
+        return tag_center_x // self.hysteresis + 1
 
     def format_direction(self, direction):
         """Format message to send in console"""
         arr = ["LEFT", "LITTLE LEFT", "CENTER", "LITTLE RIGHT", "RIGHT"]
-        return arr[direction]
+        return arr[direction - 1]
 
     def send_bluetooth_update(self, message):
         """Send update via Bluetooth if enough time has passed"""
@@ -130,13 +130,13 @@ class Main:
                             self.send_bluetooth_update(direction)
                 else:
                     # No tag detected
-                    if self.last_direction != "-1":
+                    if self.last_direction != "0":
                         # Console output
                         print("NO TAG")
-                        self.last_direction = "-1"
+                        self.last_direction = "0"
                         # Bluetooth update
                         if self.use_bluetooth:
-                            self.send_bluetooth_update(-1)
+                            self.send_bluetooth_update(0)
 
                 # Small delay to prevent CPU spinning
                 time.sleep(0.01)
