@@ -130,10 +130,10 @@ class Main:
                             self.send_bluetooth_update(f"{self.format_direction(direction)}")
                 else:
                     # No tag detected
-                    if self.last_direction == 0:
+                    if self.last_direction != 0:
                         # Console output
                         print("NO TAG")
-                        self.last_direction = "0"
+                        self.last_direction = 0
                         # Bluetooth update
                         if self.use_bluetooth:
                             self.send_bluetooth_update(f"NO TAG")
