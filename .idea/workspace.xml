@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Testing pairable">
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Applying BLE server fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ble_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/ble_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +72,7 @@
       <updated>1774750330685</updated>
       <workItem from="1774750331784" duration="10684000" />
       <workItem from="1774770696208" duration="1012000" />
-      <workItem from="1774813789886" duration="13345000" />
+      <workItem from="1774813789886" duration="15126000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -171,7 +170,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774824872117</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Applying BLE server fix">
+      <option name="closed" value="true" />
+      <created>1774831668499</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1774831668499</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -196,6 +203,7 @@
     <MESSAGE value="Switching to BLESS" />
     <MESSAGE value="Testing discoverable" />
     <MESSAGE value="Testing pairable" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing pairable" />
+    <MESSAGE value="Applying BLE server fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Applying BLE server fix" />
   </component>
 </project>

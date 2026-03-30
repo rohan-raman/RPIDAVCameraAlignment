@@ -1,5 +1,212 @@
 # bless_server.py - Raspberry Pi BLE Server (modified)
+# bless_server.py - Apple-friendly minimal version
 
+import asyncio
+import threading
+import logging
+from typing import Any
+from bless import (
+    BlessServer,
+    BlessGATTCharacteristic,
+    GATTCharacteristicProperties,
+    GATTAttributePermissions,
+)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# -----------------------
+# UUIDs
+# -----------------------
+
+# Custom service (your data)
+SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0"
+CHAR_UUID = "12345678-1234-5678-1234-56789abcdef1"
+
+# Standard Device Information Service (DIS)
+DIS_SERVICE_UUID = "0000180A-0000-1000-8000-00805F9B34FB"
+MANUFACTURER_CHAR_UUID = "00002A29-0000-1000-8000-00805F9B34FB"
+MODEL_CHAR_UUID = "00002A24-0000-1000-8000-00805F9B34FB"
+
+DEVICE_NAME = "PiDataServer"
+
+
+class BLEServer:
+    def __init__(self):
+        self.server: BlessServer = None
+        self.loop: asyncio.AbstractEventLoop = None
+        self.thread: threading.Thread = None
+        self.running = False
+
+        self.current_value = bytearray(b"NO_TAG:0:0")
+
+    # -----------------------
+    # Callbacks
+    # -----------------------
+    def read_request(self, characteristic: BlessGATTCharacteristic, **kwargs) -> bytearray:
+        return self.current_value
+
+    def write_request(self, characteristic: BlessGATTCharacteristic, value: Any, **kwargs):
+        logger.info(f"Write request: {value}")
+
+    # -----------------------
+    # Setup
+    # -----------------------
+    async def setup(self):
+        self.server = BlessServer(name=DEVICE_NAME, loop=self.loop)
+
+        self.server.read_request_func = self.read_request
+        self.server.write_request_func = self.write_request
+
+        # ---- Custom Service ----
+        await self.server.add_new_service(SERVICE_UUID)
+
+        await self.server.add_new_characteristic(
+            SERVICE_UUID,
+            CHAR_UUID,
+            GATTCharacteristicProperties.read | GATTCharacteristicProperties.notify,
+            self.current_value,
+            GATTAttributePermissions.readable,
+        )
+
+        # ---- Device Information Service (Apple expects this) ----
+        await self.server.add_new_service(DIS_SERVICE_UUID)
+
+        await self.server.add_new_characteristic(
+            DIS_SERVICE_UUID,
+            MANUFACTURER_CHAR_UUID,
+            GATTCharacteristicProperties.read,
+            bytearray(b"MyCompany"),
+            GATTAttributePermissions.readable,
+        )
+
+        await self.server.add_new_characteristic(
+            DIS_SERVICE_UUID,
+            MODEL_CHAR_UUID,
+            GATTCharacteristicProperties.read,
+            bytearray(b"AprilTagAligner v1"),
+            GATTAttributePermissions.readable,
+        )
+
+        await self.server.start()
+
+        logger.info("BLE Server started (Apple-friendly)")
+        logger.info(f"Device: {DEVICE_NAME}")
+
+    # -----------------------
+    # Thread / loop
+    # -----------------------
+    def _run_loop(self):
+        self.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self.loop)
+
+        try:
+            self.loop.run_until_complete(self.setup())
+            self.running = True
+            self.loop.run_forever()
+        except Exception as e:
+            logger.error(f"Loop error: {e}")
+        finally:
+            self.running = False
+
+    def start(self):
+        logger.info("Starting BLE server...")
+
+        self.thread = threading.Thread(target=self._run_loop, daemon=True)
+        self.thread.start()
+
+        import time
+        start = time.time()
+        while not self.running and time.time() - start < 5:
+            time.sleep(0.1)
+
+        if not self.running:
+            raise RuntimeError("Server failed to start")
+
+        logger.info("Server started")
+
+    # -----------------------
+    # Send updates
+    # -----------------------
+    def send(self, data: str):
+        if not self.running or not self.server:
+            return
+
+        self.current_value = bytearray(data.encode("utf-8"))
+
+        if self.loop and self.loop.is_running():
+            asyncio.run_coroutine_threadsafe(self._notify(), self.loop)
+
+    async def _notify(self):
+        try:
+            char = self.server.get_characteristic(CHAR_UUID)
+            char.value = self.current_value
+
+            # Send notification
+            self.server.update_value(SERVICE_UUID, CHAR_UUID)
+
+        except Exception:
+            pass  # Ignore if no subscribers
+
+    # -----------------------
+    # Stop
+    # -----------------------
+    def stop(self):
+        logger.info("Stopping server...")
+
+        if self.loop and self.loop.is_running():
+
+            async def _stop():
+                if self.server:
+                    await self.server.stop()
+
+            future = asyncio.run_coroutine_threadsafe(_stop(), self.loop)
+            try:
+                future.result(timeout=2)
+            except:
+                pass
+
+            self.loop.call_soon_threadsafe(self.loop.stop)
+
+        if self.thread and self.thread.is_alive():
+            self.thread.join(timeout=2)
+
+        self.running = False
+        logger.info("Server stopped")
+
+
+# -----------------------
+# Test mode
+# -----------------------
+if __name__ == "__main__":
+    import time
+
+    server = BLEServer()
+
+    try:
+        server.start()
+
+        directions = [
+            "LEFT:-100:1",
+            "CENTERED:0:1",
+            "RIGHT:100:1",
+            "NO_TAG:0:0"
+        ]
+
+        i = 0
+        while True:
+            msg = directions[i % len(directions)]
+            logger.info(f"Sending: {msg}")
+            server.send(msg)
+            i += 1
+            time.sleep(2)
+
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.stop()
+
+'''
 import asyncio
 import threading
 import logging
@@ -182,3 +389,4 @@ if __name__ == "__main__":
         pass
     finally:
         server.stop()
+'''
