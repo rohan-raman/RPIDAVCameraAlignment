@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Reverting ble_service.py">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ble_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/ble_service.py" afterDir="false" />
-    </list>
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="cry" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -78,7 +75,7 @@
       <workItem from="1774770696208" duration="1012000" />
       <workItem from="1774813789886" duration="17479000" />
       <workItem from="1774850402267" duration="665000" />
-      <workItem from="1774854915095" duration="2271000" />
+      <workItem from="1774854915095" duration="2529000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -288,7 +285,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774856940799</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="cry">
+      <option name="closed" value="true" />
+      <created>1774857224545</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1774857224545</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,6 +327,7 @@
     <MESSAGE value="Bad boolean" />
     <MESSAGE value="Test if Boolean logic is bad" />
     <MESSAGE value="Reverting ble_service.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Reverting ble_service.py" />
+    <MESSAGE value="cry" />
+    <option name="LAST_COMMIT_MESSAGE" value="cry" />
   </component>
 </project>

@@ -120,8 +120,7 @@ class Main:
                     center_x = int(tag.center[0])
                     direction = self.calculate_direction(center_x)
 
-                    if True:
-                    #if direction != self.last_direction:
+                    if direction != self.last_direction:
                         # Console output
                         print(self.format_direction(direction))
                         self.last_direction = direction
