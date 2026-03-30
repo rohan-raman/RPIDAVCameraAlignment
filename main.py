@@ -96,7 +96,7 @@ class Main:
         print("AprilTag Finder Started!")
         print("=" * 50)
         print(f"Camera resolution: {self.frame_width}x{self.frame_height}")
-        print(f"Dead zone: ±{self.dead_zone} pixels")
+        print(f"Hysteresis: {self.hysteresis} pixels")
         print(f"Bluetooth: {'Enabled' if self.use_bluetooth else 'Disabled'}")
         print("\nPress Ctrl+C to quit")
         print("=" * 50 + "\n")
