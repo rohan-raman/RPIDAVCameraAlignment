@@ -25,12 +25,14 @@ class Main:
         self.detector = None
         self.use_bluetooth = use_bluetooth and BLE_AVAILABLE
 
+        self.frame_width = 640
+        self.frame_height = 480
+        self.center_x = self.frame_width // 2
+
         # Camera setup
         print("Initializing camera...")
         self.camera = Picamera2()
-        config = self.camera.create_preview_configuration(
-            main={"size": (640, 480), "format": "RGB888"}
-        )
+        config = self.camera.create_still_configuration()
         self.camera.configure(config)
 
         print("Starting detector...")
@@ -45,9 +47,7 @@ class Main:
         )
 
         # Frame dimensions
-        self.frame_width = 640
-        self.frame_height = 480
-        self.center_x = self.frame_width // 2
+
 
         # Dead zone (how close to center is "good enough")
         self.hysteresis = self.frame_width // 5  # pixels
