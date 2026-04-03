@@ -4,7 +4,8 @@ AprilTag Finder with Bluetooth Guidance
 Detects AprilTags and sends direction guidance via Bluetooth
 """
 
-from picamera2 import Picamera2, controls
+from picamera2 import Picamera2
+from libcamera import controls
 import cv2
 from dt_apriltags import Detector
 import time
