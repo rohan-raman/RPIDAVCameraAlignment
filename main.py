@@ -25,14 +25,16 @@ class Main:
         self.detector = None
         self.use_bluetooth = use_bluetooth and BLE_AVAILABLE
 
-        self.frame_width = 640
-        self.frame_height = 480
+        self.frame_width = 4608
+        self.frame_height = 2592
         self.center_x = self.frame_width // 2
 
         # Camera setup
         print("Initializing camera...")
         self.camera = Picamera2()
-        config = self.camera.create_still_configuration()
+        config = self.camera.create_still_configuration(
+            main={"size": (self.frame_width, self.frame_height)}  # Full sensor resolution
+        )
         self.camera.configure(config)
 
         print("Starting detector...")
