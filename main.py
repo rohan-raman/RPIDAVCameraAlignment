@@ -73,6 +73,110 @@ class Main:
         # Last known state
         self.last_direction = None
 
+    def get_tag_focus_window(self, tag, padding=1.5):
+        """
+        Calculate a focus window around the detected AprilTag.
+
+        Args:
+            tag: Detected AprilTag object
+            padding: Multiplier to expand the window (1.5 = 50% larger)
+
+        Returns:
+            Tuple (x, y, width, height) normalized to 0-1 range for AfWindows,
+            or None if invalid
+        """
+        # Get the corner points of the tag
+        corners = tag.corners
+
+        # Calculate bounding box
+        min_x = int(min(c[0] for c in corners))
+        max_x = int(max(c[0] for c in corners))
+        min_y = int(min(c[1] for c in corners))
+        max_y = int(max(c[1] for c in corners))
+
+        # Calculate dimensions with padding
+        tag_width = max_x - min_x
+        tag_height = max_y - min_y
+
+        pad_x = int(tag_width * (padding - 1) / 2)
+        pad_y = int(tag_height * (padding - 1) / 2)
+
+        # Apply padding and clamp to frame bounds
+        x1 = max(0, min_x - pad_x)
+        y1 = max(0, min_y - pad_y)
+        x2 = min(self.frame_width, max_x + pad_x)
+        y2 = min(self.frame_height, max_y + pad_y)
+
+        width = x2 - x1
+        height = y2 - y1
+
+        # Return as pixel coordinates (for AfWindows)
+        return (x1, y1, width, height)
+
+    def focus_on_tag(self, tag):
+        """
+        Set the camera's autofocus window to the AprilTag location.
+        """
+        current_time = time.time()
+
+        # Rate limit focus changes
+        if current_time - self.last_focus_time < self.focus_interval:
+            return
+
+        focus_window = self.get_tag_focus_window(tag)
+
+        if focus_window is None:
+            return
+
+        # Only update if window has changed significantly
+        if self.last_focus_window is not None:
+            old = self.last_focus_window
+            # Check if window moved more than 10% of frame
+            if (abs(focus_window[0] - old[0]) < self.frame_width * 0.1 and
+                    abs(focus_window[1] - old[1]) < self.frame_height * 0.1):
+                return
+
+        try:
+            # Set the autofocus window to the tag region
+            self.camera.set_controls({
+                "AfMode": controls.AfModeEnum.Continuous,
+                "AfMetering": controls.AfMeteringEnum.Windows,
+                "AfWindows": [focus_window]
+            })
+
+            self.last_focus_window = focus_window
+            self.last_focus_time = current_time
+
+            print(f"  [Focus] Window set to: {focus_window}")
+
+        except Exception as e:
+            print(f"  [Focus] Error setting focus window: {e}")
+
+    def reset_focus_to_center(self):
+        """Reset focus to center of frame when no tag is detected."""
+        current_time = time.time()
+
+        if current_time - self.last_focus_time < self.focus_interval:
+            return
+
+        if self.last_focus_window is None:
+            return  # Already reset
+
+        try:
+            # Reset to auto metering (whole frame)
+            self.camera.set_controls({
+                "AfMode": controls.AfModeEnum.Continuous,
+                "AfMetering": controls.AfMeteringEnum.Auto
+            })
+
+            self.last_focus_window = None
+            self.last_focus_time = current_time
+
+            print("  [Focus] Reset to auto")
+
+        except Exception as e:
+            print(f"  [Focus] Error resetting focus: {e}")
+
     def calculate_direction(self, tag_center_x):
         """
         Calculate which direction to move based on tag position
@@ -105,11 +209,13 @@ class Main:
         print("=" * 50 + "\n")
 
         self.camera.start()
-        self.camera.set_controls({"AfMode": controls.AfModeEnum.Auto})
+        self.camera.set_controls({
+            "AfMode": controls.AfModeEnum.Continuous,
+            "AfSpeed": controls.AfSpeedEnum.Fast
+        })
 
         try:
             while True:
-                self.camera.autofocus_cycle()
                 # Capture frame
                 frame = self.camera.capture_array()
 
@@ -121,9 +227,14 @@ class Main:
 
                 # Process first detected tag (you could handle multiple)
                 if tags:
-                    tag = tags[0]  # Use first tag
+                    # Use the largest tag (most likely closest/most important)
+                    tag = max(tags, key=lambda t: self._tag_area(t))
+
                     center_x = int(tag.center[0])
                     direction = self.calculate_direction(center_x)
+
+                    # Focus on the detected tag
+                    self.focus_on_tag(tag)
 
                     if direction != self.last_direction:
                         # Console output
@@ -133,7 +244,9 @@ class Main:
                         if self.use_bluetooth:
                             self.send_bluetooth_update(f"{self.format_direction(direction)}")
                 else:
-                    # No tag detected
+                    # No tag detected - reset focus
+                    self.reset_focus_to_center()
+
                     if self.last_direction != 0:
                         # Console output
                         print("NO TAG")
@@ -149,6 +262,18 @@ class Main:
             print("\nStopping...")
         finally:
             self.cleanup()
+
+    def _tag_area(self, tag):
+        """Calculate approximate area of a tag (for sorting by size)."""
+        corners = tag.corners
+        # Shoelace formula for polygon area
+        n = len(corners)
+        area = 0
+        for i in range(n):
+            j = (i + 1) % n
+            area += corners[i][0] * corners[j][1]
+            area -= corners[j][0] * corners[i][1]
+        return abs(area) / 2
 
     def cleanup(self):
         """Clean up resources"""
