@@ -17,10 +17,35 @@ except ImportError as e:
     BLE_AVAILABLE = False
     print(f"BLE not available - running in camera-only mode: {e}")
 
-
-
-
 class Main:
+
+    DIRECTION_MAP = [
+        None,          # 0 (unused)
+        "FAR LEFT",    # 1
+        "FAR LEFT",    # 2
+        "FAR LEFT",    # 3
+        "FAR LEFT",    # 4
+        "FAR LEFT",    # 5
+        "LEFT",        # 6
+        "LEFT",        # 7
+        "LEFT",        # 8
+        "SLIGHTLY LEFT",  # 9
+        "SLIGHTLY LEFT",  # 10
+        "5 LEFT",      # 11
+        "CENTER",      # 12
+        "5 RIGHT",     # 13
+        "SLIGHTLY RIGHT", # 14
+        "SLIGHTLY RIGHT", # 15
+        "RIGHT",       # 16
+        "RIGHT",       # 17
+        "RIGHT",       # 18
+        "FAR RIGHT",   # 19
+        "FAR RIGHT",   # 20
+        "FAR RIGHT",   # 21
+        "FAR RIGHT",   # 22
+        "FAR RIGHT",   # 23
+    ]
+
     def __init__(self, use_bluetooth=True):
         self.detector = None
         self.use_bluetooth = use_bluetooth and BLE_AVAILABLE
@@ -52,7 +77,7 @@ class Main:
 
 
         # Dead zone (how close to center is "good enough")
-        self.hysteresis = self.frame_width // 5  # pixels
+        self.hysteresis = self.frame_width // 23  # pixels
 
         # Bluetooth
         self.ble_server = None
@@ -184,14 +209,22 @@ class Main:
     def calculate_direction(self, tag_center_x):
         """
         Calculate which direction to move based on tag position
-        Returns: 1 (left), 2 (little left), 3 (center), 4 (little right), 5 (right)
+        Returns: 
+            1, 2, 3, 4, 5 - far left
+            6, 7, 8 - left
+            9, 10 - slightly left
+            11 - hole is less than 5 degrees left (5 left)
+            12 (center)
+            13 - hole is less than 5 degrees right (5 right)
+            14, 15 - slightly right
+            16, 17, 18 - right
+            19, 20, 21, 22, 23 - far right
         """
         return tag_center_x // self.hysteresis + 1
 
     def format_direction(self, direction):
         """Format message to send in console"""
-        arr = ["LEFT", "LITTLE LEFT", "CENTER", "LITTLE RIGHT", "RIGHT"]
-        return arr[direction - 1]
+        return self.DIRECTION_MAP[direction]
 
     def send_bluetooth_update(self, message):
         """Send update via Bluetooth if enough time has passed"""
