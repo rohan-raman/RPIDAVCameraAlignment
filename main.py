@@ -73,6 +73,11 @@ class Main:
         # Last known state
         self.last_direction = None
 
+        # Focus tracking
+        self.last_focus_time = 0
+        self.focus_interval = 0.5  # Re-focus every 500ms max
+        self.last_focus_window = None
+
     def get_tag_focus_window(self, tag, padding=1.5):
         """
         Calculate a focus window around the detected AprilTag.
