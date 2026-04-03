@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="adding libcamera">
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Forgot to add focus variables to main class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -33,7 +33,7 @@
   }
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
@@ -80,7 +80,7 @@
       <workItem from="1774850402267" duration="665000" />
       <workItem from="1774854915095" duration="2859000" />
       <workItem from="1774925519925" duration="101000" />
-      <workItem from="1775181657515" duration="5091000" />
+      <workItem from="1775181657515" duration="5739000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -338,7 +338,23 @@
       <option name="project" value="LOCAL" />
       <updated>1775187708513</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Changing back to continuous focus but filtering for last known tag locations.">
+      <option name="closed" value="true" />
+      <created>1775188420266</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1775188420266</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Forgot to add focus variables to main class">
+      <option name="closed" value="true" />
+      <created>1775188611372</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1775188611372</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -377,6 +393,8 @@
     <MESSAGE value="adding better camera dimensions" />
     <MESSAGE value="adding controlled autofocus" />
     <MESSAGE value="adding libcamera" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding libcamera" />
+    <MESSAGE value="Changing back to continuous focus but filtering for last known tag locations." />
+    <MESSAGE value="Forgot to add focus variables to main class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Forgot to add focus variables to main class" />
   </component>
 </project>
