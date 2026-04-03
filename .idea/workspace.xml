@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="no refine edges">
-      <change afterPath="$PROJECT_DIR$/autorun.sh" afterDir="false" />
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Reverted refine edges + push autorun.sh">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +83,7 @@
       <workItem from="1774854915095" duration="2859000" />
       <workItem from="1774925519925" duration="101000" />
       <workItem from="1775181657515" duration="7446000" />
-      <workItem from="1775254255974" duration="148000" />
+      <workItem from="1775254255974" duration="3064000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -372,7 +373,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775229151057</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Reverted refine edges + push autorun.sh">
+      <option name="closed" value="true" />
+      <created>1775254601991</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1775254601991</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -390,7 +399,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="commit" />
     <MESSAGE value="Fix detector typo" />
     <MESSAGE value="Fix app path pointing to inaccessible path by user" />
     <MESSAGE value="Fix needing to confirm connection" />
@@ -415,6 +423,7 @@
     <MESSAGE value="Forgot to add focus variables to main class" />
     <MESSAGE value="switching to video configuration (better for continuous shots) and" />
     <MESSAGE value="no refine edges" />
-    <option name="LAST_COMMIT_MESSAGE" value="no refine edges" />
+    <MESSAGE value="Reverted refine edges + push autorun.sh" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reverted refine edges + push autorun.sh" />
   </component>
 </project>

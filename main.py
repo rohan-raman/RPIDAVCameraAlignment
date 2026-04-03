@@ -6,7 +6,6 @@ Detects AprilTags and sends direction guidance via Bluetooth
 
 from picamera2 import Picamera2
 from libcamera import controls
-import cv2
 from dt_apriltags import Detector
 import time
 
@@ -33,8 +32,8 @@ class Main:
         # Camera setup
         print("Initializing camera...")
         self.camera = Picamera2()
-        config = self.camera.create_video_configuration(
-            main={"size": (self.frame_width, self.frame_height)}  # Full sensor resolution
+        config = self.camera.create_preview_configuration(
+            main={'format': 'YUV420', "size": (self.frame_width, self.frame_height)}  # Full sensor resolution
         )
         self.camera.configure(config)
 
@@ -225,7 +224,7 @@ class Main:
                 frame = self.camera.capture_array()
 
                 # Convert to grayscale for detection
-                gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+                gray = frame[:self.frame_height, :self.frame_width]
 
                 # Detect AprilTags
                 tags = self.detector.detect(gray)
