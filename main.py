@@ -258,7 +258,7 @@ class Main:
                 frame = self.camera.capture_array()
 
                 # Convert to grayscale for detection
-                gray = frame[:self.frame_height, :self.frame_width]
+                gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
                 # Detect AprilTags
                 tags = self.detector.detect(gray)
