@@ -58,9 +58,10 @@ class Main:
         print("Initializing camera...")
         self.camera = Picamera2()
         config = self.camera.create_preview_configuration(
-            main={'format': 'YUV420', "size": (self.frame_width, self.frame_height)}  # Full sensor resolution
+            main={"size": (self.frame_width, self.frame_height)}  # Full sensor resolution
         )
         self.camera.configure(config)
+        self.camera.set_controls({"Saturation": 0.0})
 
         print("Starting detector...")
         self.detector = Detector(
@@ -170,7 +171,8 @@ class Main:
             self.camera.set_controls({
                 "AfMode": controls.AfModeEnum.Continuous,
                 "AfMetering": controls.AfMeteringEnum.Windows,
-                "AfWindows": [focus_window]
+                "AfWindows": [focus_window],
+                "Saturation": 0.0
             })
 
             self.last_focus_window = focus_window
