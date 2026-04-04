@@ -7,6 +7,7 @@ Detects AprilTags and sends direction guidance via Bluetooth
 from picamera2 import Picamera2
 from libcamera import controls
 from dt_apriltags import Detector
+import cv2
 import time
 
 # Try to import BLE - we'll handle if it fails
@@ -58,10 +59,9 @@ class Main:
         print("Initializing camera...")
         self.camera = Picamera2()
         config = self.camera.create_preview_configuration(
-            main={"size": (self.frame_width, self.frame_height)}  # Full sensor resolution
+            main={"size": (self.frame_width, self.frame_height)}
         )
         self.camera.configure(config)
-        self.camera.set_controls({"Saturation": 0.0})
 
         print("Starting detector...")
         self.detector = Detector(
@@ -171,8 +171,7 @@ class Main:
             self.camera.set_controls({
                 "AfMode": controls.AfModeEnum.Continuous,
                 "AfMetering": controls.AfMeteringEnum.Windows,
-                "AfWindows": [focus_window],
-                "Saturation": 0.0
+                "AfWindows": [focus_window]
             })
 
             self.last_focus_window = focus_window

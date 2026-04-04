@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="libcamera not necessary in requirements">
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="Trying alternative way to do grayscale">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -83,7 +83,7 @@
       <workItem from="1774854915095" duration="2859000" />
       <workItem from="1774925519925" duration="101000" />
       <workItem from="1775181657515" duration="7446000" />
-      <workItem from="1775254255974" duration="5275000" />
+      <workItem from="1775254255974" duration="6120000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -397,7 +397,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775259702943</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Trying alternative way to do grayscale">
+      <option name="closed" value="true" />
+      <created>1775263593031</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1775263593031</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -415,7 +423,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix needing to confirm connection" />
     <MESSAGE value="Switching to BLESS" />
     <MESSAGE value="Testing discoverable" />
     <MESSAGE value="Testing pairable" />
@@ -440,6 +447,7 @@
     <MESSAGE value="Reverted refine edges + push autorun.sh" />
     <MESSAGE value="sorry annie" />
     <MESSAGE value="libcamera not necessary in requirements" />
-    <option name="LAST_COMMIT_MESSAGE" value="libcamera not necessary in requirements" />
+    <MESSAGE value="Trying alternative way to do grayscale" />
+    <option name="LAST_COMMIT_MESSAGE" value="Trying alternative way to do grayscale" />
   </component>
 </project>
