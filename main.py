@@ -312,6 +312,9 @@ class Main:
             area -= corners[j][0] * corners[i][1]
         return abs(area) / 2
 
+    def distance(self, tag_area):
+        
+
     def cleanup(self):
         """Clean up resources"""
         print("Cleaning up...")
