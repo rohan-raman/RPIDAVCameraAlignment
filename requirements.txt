@@ -1,4 +1,4 @@
 picamera2
 dt-apriltags
 bless
-libcamera
+opencv-python
