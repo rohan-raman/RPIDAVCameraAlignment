@@ -55,6 +55,9 @@ class Main:
         self.frame_height = 1080
         self.center_x = self.frame_width // 2
 
+        # Camera intrinsic values; may need to adjust/calibrate if accuracy is not good
+        self.camera_params = [554, 554, 960, 540]
+
         # Camera setup
         print("Initializing camera...")
         self.camera = Picamera2()
@@ -226,7 +229,7 @@ class Main:
     def format_direction(self, direction):
         """Format message to send in console"""
         return self.DIRECTION_MAP[direction]
-
+    
     def send_bluetooth_update(self, message):
         """Send update via Bluetooth if enough time has passed"""
         current_time = time.time()
@@ -261,12 +264,15 @@ class Main:
                 gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
                 # Detect AprilTags
-                tags = self.detector.detect(gray)
+                tags = self.detector.detect(gray, estimate_tag_pose = True, camera_params = self.camera_params, tag_size = 0.15)
 
                 # Process first detected tag (you could handle multiple)
                 if tags:
                     # Use the largest tag (most likely closest/most important)
                     tag = max(tags, key=lambda t: self._tag_area(t))
+
+                    # Get distance from detector
+                    distance_z = float(tag.pose_t[2][0])
 
                     center_x = int(tag.center[0])
                     direction = self.calculate_direction(center_x)
