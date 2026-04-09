@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="requirements needs to stay the same">
+    <list default="true" id="ccad4104-b42e-45ab-a321-66dff5f1626d" name="Changes" comment="missed Cv2 line">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +82,7 @@
       <workItem from="1774854915095" duration="2859000" />
       <workItem from="1774925519925" duration="101000" />
       <workItem from="1775181657515" duration="7446000" />
-      <workItem from="1775254255974" duration="6603000" />
+      <workItem from="1775254255974" duration="8086000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -421,7 +420,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775264936654</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="missed Cv2 line">
+      <option name="closed" value="true" />
+      <created>1775265024463</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1775265024463</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -439,7 +446,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Testing pairable" />
     <MESSAGE value="Applying BLE server fix" />
     <MESSAGE value="Adding Apple standards to BLE" />
     <MESSAGE value="Switching BLE output to integer hysteresis" />
@@ -464,6 +470,7 @@
     <MESSAGE value="Trying alternative way to do grayscale" />
     <MESSAGE value="Reverting to original way of grayscale because issues with WiFi" />
     <MESSAGE value="requirements needs to stay the same" />
-    <option name="LAST_COMMIT_MESSAGE" value="requirements needs to stay the same" />
+    <MESSAGE value="missed Cv2 line" />
+    <option name="LAST_COMMIT_MESSAGE" value="missed Cv2 line" />
   </component>
 </project>
