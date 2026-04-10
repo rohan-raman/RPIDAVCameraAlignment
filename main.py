@@ -261,7 +261,7 @@ class Main:
                 gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
                 # Detect AprilTags
-                tags = self.detector.detect(gray)
+                tags = self.detector.detect(gray, estimate_tag_pose = True, camera_params = self.camera_params, tag_size = 0.15)
 
                 # Process first detected tag (you could handle multiple)
                 if tags:
