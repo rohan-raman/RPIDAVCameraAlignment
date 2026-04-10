@@ -14,8 +14,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # UUIDs
-SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0"
-CHAR_UUID = "12345678-1234-5678-1234-56789abcdef1"
+DATA_SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0"
+ALIGNMENT_CHAR_UUID = "12345678-1234-5678-1234-56789abcdef1"
+DISTANCE_CHAR_UUID = "12345678-1234-5678-1234-56789abcdef2"
 
 DEVICE_NAME = "PiDataServer"
 
@@ -28,14 +29,19 @@ class BLEServer:
         self.running = False
 
         # Stored value (what clients read + receive)
-        self.current_value = bytearray(b"NO_TAG:0:0")
+        self.alignment_value = bytearray(b"NO_TAG:0:0")
+        self.distance_value = bytearray(b"NO_DISTANCE:0:0")
+
 
     # -----------------------
     # Callbacks
     # -----------------------
     def read_request(self, characteristic: BlessGATTCharacteristic, **kwargs) -> bytearray:
-        logger.info(f"Read request -> {self.current_value}")
-        return self.current_value
+        logger.info(f"Read request -> {characteristic}")
+        if characteristic.uuid == ALIGNMENT_CHAR_UUID:
+           return self.alignment_value
+        elif characteristic.uuid == DISTANCE_CHAR_UUID:
+           return self.distance_value
 
     def write_request(self, characteristic: BlessGATTCharacteristic, value: Any, **kwargs):
         logger.info(f"Write request -> {value}")
@@ -49,22 +55,32 @@ class BLEServer:
         self.server.read_request_func = self.read_request
         self.server.write_request_func = self.write_request
 
-        await self.server.add_new_service(SERVICE_UUID)
+        await self.server.add_new_service(DATA_SERVICE_UUID)
 
-        # Single characteristic: READ + NOTIFY
+        # Alignment characteristic: READ + NOTIFY
         await self.server.add_new_characteristic(
-            SERVICE_UUID,
-            CHAR_UUID,
+            DATA_SERVICE_UUID,
+            ALIGNMENT_CHAR_UUID,
             GATTCharacteristicProperties.read | GATTCharacteristicProperties.notify,
-            self.current_value,
+            self.alignment_value,
+            GATTAttributePermissions.readable,
+        )
+
+        # Distance characteristic: READ + NOTIFY
+        await self.server.add_new_characteristic(
+            DATA_SERVICE_UUID,
+            DISTANCE_CHAR_UUID,
+            GATTCharacteristicProperties.read | GATTCharacteristicProperties.notify,
+            self.distance_value,
             GATTAttributePermissions.readable,
         )
 
         await self.server.start()
 
         logger.info("BLE Server started")
-        logger.info(f"Service: {SERVICE_UUID}")
-        logger.info(f"Characteristic: {CHAR_UUID}")
+        logger.info(f"Service: {DATA_SERVICE_UUID}")
+        logger.info(f"Characteristic: {ALIGNMENT_CHAR_UUID}")
+        logger.info(f"Characteristic: {DISTANCE_CHAR_UUID}")
 
     # -----------------------
     # Thread / loop handling
@@ -99,6 +115,11 @@ class BLEServer:
 
         logger.info("Server started successfully")
 
+    def update_distance(self, data: str):
+        if not self.running or not self.server:
+            return
+        self.distance_value = bytearray(data, "utf-8")
+
     # -----------------------
     # Send notifications
     # -----------------------
@@ -106,7 +127,7 @@ class BLEServer:
         if not self.running or not self.server:
             return
 
-        self.current_value = bytearray(data, "utf-8")
+        self.alignment_value = bytearray(data, "utf-8")
 
         if self.loop and self.loop.is_running():
             asyncio.run_coroutine_threadsafe(self._notify(), self.loop)
@@ -114,12 +135,12 @@ class BLEServer:
     async def _notify(self):
         try:
             # Update stored value
-            self.server.get_characteristic(CHAR_UUID).value = self.current_value
+            self.server.get_characteristic(ALIGNMENT_CHAR_UUID).value = self.alignment_value
 
             # Notify clients
-            self.server.update_value(SERVICE_UUID, CHAR_UUID)
+            self.server.update_value(DATA_SERVICE_UUID, ALIGNMENT_CHAR_UUID)
 
-            logger.info(f"Notified: {self.current_value}")
+            logger.info(f"Notified: {self.alignment_value}")
         except Exception:
             pass  # Ignore if no clients connected
 
