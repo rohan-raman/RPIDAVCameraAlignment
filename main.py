@@ -273,7 +273,7 @@ class Main:
                     center_x = int(tag.center[0])
                     direction = self.calculate_direction(center_x)
 
-                    distance_z = float(tag.pose_t[2][0])
+                    distance_z = float(tag.pose_t[2][0]) * 39.3701
 
                     # Focus on the detected tag
                     self.focus_on_tag(tag)
