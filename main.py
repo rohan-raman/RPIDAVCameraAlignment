@@ -55,6 +55,8 @@ class Main:
         self.frame_height = 1080
         self.center_x = self.frame_width // 2
 
+        self.camera_params = [554, 554, 960, 540]
+
         # Camera setup
         print("Initializing camera...")
         self.camera = Picamera2()
