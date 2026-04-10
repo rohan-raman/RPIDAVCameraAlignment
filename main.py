@@ -273,12 +273,15 @@ class Main:
                     center_x = int(tag.center[0])
                     direction = self.calculate_direction(center_x)
 
+                    distance_z = float(tag.pose_t[2][0])
+
                     # Focus on the detected tag
                     self.focus_on_tag(tag)
 
                     if direction != self.last_direction:
                         # Console output
                         print(self.format_direction(direction))
+                        print(distance_z)
                         self.last_direction = direction
                         # Bluetooth update
                         if self.use_bluetooth:
