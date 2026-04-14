@@ -22,19 +22,19 @@ class Main:
 
     DIRECTION_MAP = [
         None,          # 0 (unused)
-        "FAR LEFT",    # 1
-        "FAR LEFT",    # 2
-        "FAR LEFT",    # 3
-        "FAR LEFT",    # 4
-        "FAR LEFT",    # 5
+        "MOVE LEFT",    # 1
+        "MOVE LEFT",    # 2
+        "MOVE LEFT",    # 3
+        "MOVE LEFT",    # 4
+        "MOVE LEFT",    # 5
         "LEFT",        # 6
         "LEFT",        # 7
         "LEFT",        # 8
         "SLIGHTLY LEFT",  # 9
         "SLIGHTLY LEFT",  # 10
-        "5 LEFT",      # 11
+        "CENTER",      # 11
         "CENTER",      # 12
-        "5 RIGHT",     # 13
+        "CENTER",     # 13
         "SLIGHTLY RIGHT", # 14
         "SLIGHTLY RIGHT", # 15
         "RIGHT",       # 16
@@ -237,6 +237,11 @@ class Main:
                 self.ble_server.send(message)
             self.last_ble_update = current_time
 
+    def send_bluetooth_distance(self, message):
+        """Send distance update via Bluetooth"""
+        if self.ble_server:
+            self.ble_server.update_distance(message)
+
     def run(self):
         """Main loop"""
         print("\n" + "=" * 50)
@@ -275,7 +280,7 @@ class Main:
 
                     distance_z = str(float(tag.pose_t[2][0]) * 39.3701 * 1.5)
                     print(distance_z)
-                    self.update_distance(distance_z)
+                    self.send_bluetooth_distance(distance_z)
 
                     # Focus on the detected tag
                     self.focus_on_tag(tag)
